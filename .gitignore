@@ -1,6 +1,13 @@
 /node_modules/
 /dist/
 
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
 *.log
 *.txt
+*.out
 .DS_Store
