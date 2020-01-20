@@ -10,7 +10,7 @@ const userAgent = {
 };
 const videoUrlPrefix = 'https://www.bilibili.com/video/av';
 const liveUrlPrefix  = 'https://live.bilibili.com/';
-let wv, wrapper;
+let wv, wrapper, topbar;
 let _isLastNavigatePartSelect = false;
 let _isLastestVersionChecked = false;
 
@@ -216,6 +216,12 @@ const v = new Vue({
       this.showNaviGotoOverlay = true;
       document.getElementById('av-input').focus();
     },
+    // 雀魂
+    naviGotoMajsoul: function() {
+      this.naviGotoTarget = 'e';
+      this.naviGoto();
+      this.naviGotoHide();
+    },
     naviGotoHide: function() {
       this.naviGotoInputShow = this.showNaviGotoOverlay = false;
     },
@@ -224,7 +230,11 @@ const v = new Vue({
       let lv;
       utils.log(`路由：手动输入地址 ${target}`);
       // 包含bilibili.com的字符串和纯数字是合法的跳转目标
-      if(target.startsWith('http') && target.indexOf('bilibili.com') > -1) {
+      if (target.startsWith('e')) {
+        target = "https://www.majsoul.com/1/";
+        _history.go(target, null, "d");
+        this.naviGotoHide();
+      } else if(target.startsWith('http') && target.indexOf('bilibili.com') > -1) {
         _history.go(target);
         this.naviGotoHide();
       } else if (lv = /^lv(\d+)$/.exec(target)) {
@@ -243,10 +253,12 @@ const v = new Vue({
       utils.log('主窗口：点击关于');
       this.showAboutOverlay = !this.showAboutOverlay;
       wrapper.classList.toggle('showAbout');
+      topbar.classList.toggle('showAbout');
     },
     hideAbout: function() {
       this.showAboutOverlay = false;
       wrapper.classList.remove('showAbout');
+      topbar.classList.remove('showAbout');
     },
     // 召唤选p窗口
     toggleSelectPartWindow: function() {
@@ -356,6 +368,9 @@ function resizeMainWindow() {
   if( url.indexOf('video/av') > -1 || url.indexOf('html5player.html') > -1 ||
     /\/\/live\.bilibili\.com\/(h5\/)?\d+/.test(url) || url.indexOf('bangumi/play/') > -1 ) {
     targetWindowType = 'windowSizeMini';
+  } else if( url.indexOf('majsoul') > -1){
+    //雀魂修改窗口大小
+    targetWindowType = 'windowSizeMajsoulDefault';
   } else {
     targetWindowType = 'windowSizeDefault';
   }
@@ -497,19 +512,21 @@ function initMouseStateDirtyCheck() {
     }
     // 如果topbar已经下来了，就主动把触发区域变高一点，防止鼠标稍微向下滑动就触发收起
     function getTriggerAreaHeight() {
-      let h = 0.1 * windowSize[1],
-          minHeight = lastStatus == 'IN' ? 120 : 36; 
+      let h = 10;//0.1 * windowSize[1],
+          minHeight = lastStatus == 'IN' ? 120 : 10;
       return h > minHeight ? h : minHeight;
     }
     if( (mousePos.x > windowPos[0]) && (mousePos.x < windowPos[0] + windowSize[0] - getTriggerAreaWidth()) &&
         (mousePos.y > windowPos[1]) && (mousePos.y < windowPos[1] + getTriggerAreaHeight()) ) {
       if( lastStatus == 'OUT' ) {
-        wrapper.classList.add('showTopBar');
+        //wrapper.classList.add('showTopBar');
+        topbar.classList.add('showTopBar');
         lastStatus = 'IN';
       }
     } else if( lastStatus == 'IN' ) {
       lastStatus = 'OUT';
-      wrapper.classList.remove('showTopBar');
+      //wrapper.classList.remove('showTopBar');
+      topbar.classList.remove('showTopBar');
     }
   }, 200);
 }
@@ -531,6 +548,7 @@ function logWebviewError() {
 
 window.addEventListener('DOMContentLoaded', function() {
   wrapper = document.getElementById('wrapper');
+  topbar = document.getElementById('topbar');
   wv = document.getElementById('wv');
   detectPlatform();
   checkUpdateOnInit();

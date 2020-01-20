@@ -20,6 +20,22 @@ body {
       -webkit-app-region: drag; 没有生效 */
   top: 36px;
 }
+#topbar {
+  transition: all .2s ease;
+  height: 36px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+#topbar.showTopBar {
+  top: 0px;
+  box-shadow: 0px 10px 19px -8px rgba(1,1,1,0.9)
+}
+#topbar.showAbout {
+  top: -36px;
+  box-shadow: 0px 10px 19px -8px rgba(1,1,1,0.9)
+}
 #wrapper.showAbout {
   top: 211px !important;
 }
@@ -144,6 +160,12 @@ body.win .showAbout #topbar {
 #navi-goto {
   border-radius: 3px;
   font-size: 14px;
+  line-height: 15px;
+  padding: 0 5px;
+}
+#navi-majsoul {
+  border-radius: 3px;
+  font-size: 12px;
   line-height: 15px;
   padding: 0 5px;
 }
