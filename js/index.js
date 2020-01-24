@@ -13,6 +13,7 @@ const liveUrlPrefix  = 'https://live.bilibili.com/';
 let wv, wrapper, topbar;
 let _isLastNavigatePartSelect = false;
 let _isLastestVersionChecked = false;
+let clickTimer;
 
 // 保存用户浏览记录
 var _history = {
@@ -227,9 +228,17 @@ const v = new Vue({
     },
     // 雀魂
     naviGotoMajsoul: function() {
-      this.naviGotoTarget = 'e';
-      this.naviGoto();
-      this.naviGotoHide();
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => {
+        this.naviGotoTarget = 'e';
+        this.naviGoto();
+        this.naviGotoHide();
+      }, 300);
+    },
+    // 雀魂双击设置自定义大小
+    setWinCustomSize: function() {
+      clearTimeout(clickTimer);
+      resizeMainWindow('majsoul');
     },
     naviGotoHide: function() {
       this.naviGotoInputShow = this.showNaviGotoOverlay = false;
@@ -372,7 +381,7 @@ function saveWindowSizeOnResize() {
 // 根据用户访问的url决定app窗口尺寸
 var currentWindowType = 'default';
 
-function resizeMainWindow() {
+function resizeMainWindow(type) {
   let targetWindowType, url = wv.getURL();
   if( url.indexOf('video/av') > -1 || url.indexOf('html5player.html') > -1 ||
     /\/\/live\.bilibili\.com\/(h5\/)?\d+/.test(url) || url.indexOf('bangumi/play/') > -1 ) {
@@ -383,7 +392,7 @@ function resizeMainWindow() {
   } else {
     targetWindowType = 'windowSizeDefault';
   }
-  if( targetWindowType != currentWindowType ) {
+  if( targetWindowType != currentWindowType || type !== undefined) {
     let mw = remote.getCurrentWindow(),
       currentSize = mw.getSize(),
       leftTopPosition = mw.getPosition(),
@@ -391,12 +400,22 @@ function resizeMainWindow() {
       targetSize = utils.config.get(targetWindowType),
       targetPosition = [rightBottomPosition[0] - targetSize[0], rightBottomPosition[1] - targetSize[1]];
 
-    mw.setBounds({
+    let options = {
       x: targetPosition[0],
       y: targetPosition[1],
       width: targetSize[0],
       height: targetSize[1]
-    }, true);
+    };
+    if ('majsoul' === type) {
+      options = {
+        x: utils.config.get('majsoulWindowCustomPosition')[0],
+        y: utils.config.get('majsoulWindowCustomPosition')[1],
+        width: utils.config.get('majsoulWindowCustomSize')[0],
+        height: utils.config.get('majsoulWindowCustomSize')[1]
+      };
+    }
+    utils.log(`窗口设置:${JSON.stringify(options)}`);
+    mw.setBounds(options, true);
 
     currentWindowType = targetWindowType;
 

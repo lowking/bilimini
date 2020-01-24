@@ -45,7 +45,7 @@ body {
 }
 .item:hover {
   background: #ea8aa1;
-  color: #fff;
+  color: #fff !important;
 }
 .item-range:hover {
   background: #f25d8e;
@@ -94,4 +94,10 @@ body {
 }
 .input::-webkit-input-placeholder {
   color: #999;
+}
+.M {
+  width: 50px !important;
+}
+.label {
+  color: #fff;
 }

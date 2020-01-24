@@ -18,6 +18,25 @@
         <input type="text" class="input" v-model="hideShortcut">
         <span class="btn btn-submit" @click="saveHideShortcut">确定</span>
       </div>
+      <!-- 雀魂双击自定义窗口大小 -->
+      <p class="list-title">雀魂双击自定义窗口大小、位置</p>
+      <div class="item">
+        <span class="label">X</span>
+        <input type="text" class="input M" v-model="majsoulCustomPositionX">
+      </div>
+      <div class="item">
+        <span class="label">Y</span>
+        <input type="text" class="input M" v-model="majsoulCustomPositionY">
+      </div>
+      <div class="item">
+        <span class="label">宽</span>
+        <input type="text" class="input M" v-model="majsoulCustomSizeW">
+      </div>
+      <div class="item">
+        <span class="label">高</span>
+        <input type="text" class="input M" v-model="majsoulCustomSizeH">
+        <span class="btn btn-submit" @click="saveMajsoulCustomSize">保存</span>
+      </div>
       <!-- 代理 -->
       <p class="list-title">代理设置</p>
       <div class="item">
@@ -42,7 +61,11 @@
       data: {
         opacity: 1,
         hideShortcut: '',
-        proxy: ''
+        proxy: '',
+        majsoulCustomPositionX: '',
+        majsoulCustomPositionY: '',
+        majsoulCustomSizeW: '',
+        majsoulCustomSizeH: ''
       },
       watch: {
         opacity(val) {
@@ -83,12 +106,50 @@
         saveProxy() {
           config.set('proxy', this.proxy);
           ipc.send('set-proxy');
+        },
+        saveMajsoulCustomSize() {
+          let customSize = [], customPosition = [];
+          if (this.majsoulCustomPositionX == null || this.majsoulCustomPositionX === "") {
+            alert("请输入X!!");
+            return false;
+          }
+          if (this.majsoulCustomPositionY == null || this.majsoulCustomPositionY === "") {
+            alert("请输入Y!!");
+            return false;
+          }
+          if (this.majsoulCustomSizeW == null || this.majsoulCustomSizeW === "") {
+            alert("请输入宽!!");
+            return false;
+          }
+          if (this.majsoulCustomSizeH == null || this.majsoulCustomSizeH === "") {
+            alert("请输入高!!");
+            return false;
+          }
+          if (
+              !(/(^[1-9]\d*$)/.test(this.majsoulCustomSizeW)) ||
+              !(/(^[1-9]\d*$)/.test(this.majsoulCustomSizeH)) ||
+              !(/(^[0-9]\d*$)/.test(this.majsoulCustomPositionX)) ||
+              !(/(^[0-9]\d*$)/.test(this.majsoulCustomPositionY))
+          ) {
+            alert("XY宽高数值非法,请重试!!!");
+            return false;
+          }
+          customSize[0] = Number(this.majsoulCustomSizeW);
+          customSize[1] = Number(this.majsoulCustomSizeH);
+          customPosition[0] = Number(this.majsoulCustomPositionX);
+          customPosition[1] = Number(this.majsoulCustomPositionY);
+          config.set("majsoulWindowCustomSize", customSize);
+          config.set("majsoulWindowCustomPosition", customPosition);
         }
       },
       mounted() {
         this.opacity = lastOpacity = config.get('opacity');
         this.hideShortcut = config.get('hideShortcut');
         this.proxy = config.get('proxy');
+        this.majsoulCustomSizeW = config.get('majsoulWindowCustomSize')[0];
+        this.majsoulCustomSizeH = config.get('majsoulWindowCustomSize')[1];
+        this.majsoulCustomPositionX = config.get('majsoulWindowCustomPosition')[0];
+        this.majsoulCustomPositionY = config.get('majsoulWindowCustomPosition')[1];
       }
     });
 
