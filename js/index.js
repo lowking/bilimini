@@ -233,6 +233,12 @@ const v = new Vue({
         this.naviGotoTarget = 'e';
         this.naviGoto();
         this.naviGotoHide();
+        if (utils.config.get('isResetBoundForMajsoul') === 1) {
+          utils.log('重置雀魂窗口');
+          setTimeout(() => {
+            resizeMainWindow('majsoul');
+          }, 300);
+        }
       }, 300);
     },
     // 雀魂双击设置自定义大小

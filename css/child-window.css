@@ -98,6 +98,9 @@ body {
 .M {
   width: 50px !important;
 }
+.w10px {
+  width: 10px !important;
+}
 .label {
   color: #fff;
 }

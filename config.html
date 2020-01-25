@@ -37,6 +37,16 @@
         <input type="text" class="input M" v-model="majsoulCustomSizeH">
         <span class="btn btn-submit" @click="saveMajsoulCustomSize">保存</span>
       </div>
+      <!-- 单击"雀"按钮是否重置窗口大小和位置 -->
+      <p class="list-title">单击"雀"按钮是否重置窗口大小和位置</p>
+      <div class="item">
+        <input type="radio" id="option-y" value="1" class="input w10px" v-model="isResetBoundForMajsoul">
+        <label for="option-y">是</label>
+        <label>  </label>
+        <input type="radio" id="option-n" value="2" class="input w10px" v-model="isResetBoundForMajsoul">
+        <label for="option-n">否</label>
+        <span class="btn btn-submit" @click="saveIsResetBoundForMajsoul">保存</span>
+      </div>
       <!-- 代理 -->
       <p class="list-title">代理设置</p>
       <div class="item">
@@ -65,7 +75,8 @@
         majsoulCustomPositionX: '',
         majsoulCustomPositionY: '',
         majsoulCustomSizeW: '',
-        majsoulCustomSizeH: ''
+        majsoulCustomSizeH: '',
+        isResetBoundForMajsoul: 0
       },
       watch: {
         opacity(val) {
@@ -140,6 +151,9 @@
           customPosition[1] = Number(this.majsoulCustomPositionY);
           config.set("majsoulWindowCustomSize", customSize);
           config.set("majsoulWindowCustomPosition", customPosition);
+        },
+        saveIsResetBoundForMajsoul() {
+          config.set('isResetBoundForMajsoul', Number(this.isResetBoundForMajsoul));
         }
       },
       mounted() {
@@ -150,6 +164,7 @@
         this.majsoulCustomSizeH = config.get('majsoulWindowCustomSize')[1];
         this.majsoulCustomPositionX = config.get('majsoulWindowCustomPosition')[0];
         this.majsoulCustomPositionY = config.get('majsoulWindowCustomPosition')[1];
+        this.isResetBoundForMajsoul = config.get('isResetBoundForMajsoul');
       }
     });
 

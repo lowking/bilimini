@@ -31,6 +31,7 @@ var config = {
     windowSizeMajsoulDefault: [999, 562],
     majsoulWindowCustomSize: [1456, 819],
     majsoulWindowCustomPosition: [0, 0],
+    isResetBoundForMajsoul: 2,
     opacity: 1,
     hideShortcut: process.platform == 'darwin' ? 'Alt + W' : 'Ctrl + E',
     proxy: ''

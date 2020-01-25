@@ -110,7 +110,7 @@ var configWindow = null;
 function initConfigWindow() {
   utils.log('设置窗口：开始创建');
   configWindow = new electron.BrowserWindow({
-    width: 200, height: 370, frame: false, show: false
+    width: 200, height: 450, frame: false, show: false
   });
   configWindow.loadURL('file://' + __dirname + '/config.html');
   configWindow.setAlwaysOnTop(true, 'modal-panel');
