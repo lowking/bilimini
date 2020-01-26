@@ -39,6 +39,10 @@ window.addEventListener('DOMContentLoaded', function() {
           let volume = document.querySelector('.bilibili-player-iconfont-volume-max');
           volume.dispatchEvent(event);
         });
+        // 从app层把ctrl+enter穿进来,便于视频内部聚焦发弹幕
+        ipc.on('focus-danmaku-input', (ev, arg) => {
+          document.querySelector('input.bilibili-player-video-danmaku-input').focus();
+        });
         clearInterval(playerInitCheck);
       } else if( ++checkCount > 100 ) {
         clearInterval(playerInitCheck);

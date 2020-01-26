@@ -273,10 +273,15 @@ function initMenu() {
         { role: 'delete' },
         { role: 'selectall' },
         {
+          label: 'Press Enter For Bilibili Player',
+          accelerator: 'Enter',
+          click() { mainWindow.webContents.send('focus-danmaku-input'); }
+        },
+        {
           label: 'Backward',
           accelerator: 'Esc',
           click() { mainWindow.webContents.send('press-esc'); }
-        }, { 
+        }, {
           label: 'Volume+',
           accelerator: 'Up',
           click() { mainWindow.webContents.send('change-volume', 'up'); }
@@ -334,7 +339,7 @@ function bindGlobalShortcut(isUpdate) {
         selectPartWindow && selectPartWindow.isVisible() && selectPartWindow.hide();
         configWindow && configWindow.isVisible() && configWindow.hide();
       } else {
-        mainWindow.showInactive();
+        mainWindow.show();
       }
     } else {
       openMainWindow();

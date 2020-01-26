@@ -533,8 +533,8 @@ function initActionOnEsc() {
   ipc.on('press-esc', (ev) => {
     let url = wv.getURL();
     // 如果在播放页按下esc就触发后退
-    if( /video\/av\d+/.test(url) || url.indexOf('html5player.html') > -1 ) {
-      utils.log('在播放器页面按下ESC，后退至上一页');
+    if( /video\/av\d+/.test(url) || url.indexOf('html5player.html') > -1 || url.indexOf('majsoul') > -1) {
+      utils.log('在播放器页面、雀魂按下ESC，后退至上一页');
       _history.goBack();
     }
   });
@@ -544,6 +544,14 @@ function initActionOnEsc() {
 function initWebviewVolumeContrlShortcuts() {
   ipc.on('change-volume', (ev, arg) => {
     wv.send('change-volume', arg);
+  });
+}
+
+// 用户enter时，把事件传递到webview里去实现修改播放器按enter快捷输入聚焦弹幕栏
+function initWebviewSendEnterShortcuts() {
+  ipc.on('focus-danmaku-input', (ev, arg) => {
+    wv.focus();
+    wv.send('focus-danmaku-input', arg);
   });
 }
 
@@ -607,6 +615,7 @@ window.addEventListener('DOMContentLoaded', function() {
   initActionOnWebviewNavigate();
   initActionOnEsc();
   initWebviewVolumeContrlShortcuts();
+  initWebviewSendEnterShortcuts();
   saveWindowSizeOnResize();
   initMouseStateDirtyCheck();
   openWebviewConsoleOnMenuClick();
