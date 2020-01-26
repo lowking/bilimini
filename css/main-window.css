@@ -136,6 +136,9 @@ body.win .showAbout #topbar {
   margin-right: 2px;
   transition: all .2s ease;
 }
+.enable {
+  background: #fff;
+}
 .top-btn:hover {
   background: #fff;
 }
@@ -168,6 +171,12 @@ body.win .showAbout #topbar {
   padding: 0 5px;
 }
 #navi-majsoul {
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 15px;
+  padding: 0 5px;
+}
+#navi-full-screen {
   border-radius: 3px;
   font-size: 12px;
   line-height: 15px;

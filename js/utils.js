@@ -3,7 +3,9 @@ const store = new Store();
 const fs = require('graceful-fs');
 
 var constant = {
-    windowPositionKey: `Position`
+  windowPositionKey: `Position`,
+  windowBoundTempKey: `Temp`,
+  isFullScreenKey: `IsFullScreen`
 }
 
 // 设置，比永久储存库多一个默认值，诶嘿 (<ゝω·)☆

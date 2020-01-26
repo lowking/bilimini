@@ -247,6 +247,10 @@ const v = new Vue({
       clearTimeout(clickTimer);
       resizeMainWindow('majsoul');
     },
+    // 全屏
+    naviGotoFullScreen: function() {
+      resizeMainWindow('full-screen');
+    },
     naviGotoHide: function() {
       this.naviGotoInputShow = this.showNaviGotoOverlay = false;
     },
@@ -417,6 +421,7 @@ function resizeMainWindow(type) {
       targetPosition = [rightBottomPosition[0] - targetSize[0], rightBottomPosition[1] - targetSize[1]];
     }
 
+    let cw = remote.getCurrentWindow().getBounds();
     let options = {
       x: targetPosition[0],
       y: targetPosition[1],
@@ -430,9 +435,12 @@ function resizeMainWindow(type) {
         width: utils.config.get('majsoulWindowCustomSize')[0],
         height: utils.config.get('majsoulWindowCustomSize')[1]
       };
+      // 清除全屏标识
+      utils.config.delete(currentWindowType + utils.constant.isFullScreenKey);
+    } else if (`full-screen` === type) {
+      options = switchFullScreen(currentWindowType, `full-screen`);
     }
-
-    let cw = remote.getCurrentWindow().getBounds();
+    switchFullScreen(targetWindowType);
     // win上双击topbar全屏之后位置变成-8,强制修改成0,避免下次打开的时候窗口位置偏移
     utils.config.set(currentWindowType + utils.constant.windowPositionKey,
         [cw.x === -8 ? 0 : cw.x, cw.y === -8 ? 0 : cw.y]);
@@ -445,6 +453,47 @@ function resizeMainWindow(type) {
 
     // 通知设置窗口改变位置
     ipc.send('main-window-resized', targetPosition, targetSize);
+  }
+}
+
+// 切换全屏按钮
+function switchFullScreen(targetWindowType, type) {
+  let mw = remote.getCurrentWindow();
+  let key = targetWindowType + utils.constant.windowBoundTempKey;
+  let isEnableFullScreenKey = targetWindowType + utils.constant.isFullScreenKey;
+  let isEnableFullScreen = utils.config.get(isEnableFullScreenKey);
+  let fullScreenBtn = document.getElementById(`navi-full-screen`);
+  let options;
+  utils.log(`${targetWindowType}-${type}当前是否开启全屏:${isEnableFullScreen}`);
+  if (type === undefined) {
+    // 窗口类型切换的时候设置按钮样式
+    fullScreenBtn.classList.remove('enable');
+    if (isEnableFullScreen) {
+      fullScreenBtn.classList.add(`enable`);
+    } else {
+      fullScreenBtn.classList.remove(`enable`);
+    }
+  } else {
+    // 点击全屏按钮的时候修改缓存信息,并设置样式
+    if (isEnableFullScreen) {
+      // 已经是全屏,读取缓存的bound,还原成窗口,删除缓存信息,设置为false
+      options = utils.config.get(key);
+      utils.config.delete(key);
+      utils.config.delete(isEnableFullScreenKey);
+    } else {
+      // 不是全屏,缓存当前bound,设置全屏,设置为true
+      options = {
+        x: 0,
+        y: -1,
+        width: window.screen.width,
+        height: window.screen.height + 1
+      };
+
+      utils.config.set(key, mw.getBounds());
+      utils.config.set(isEnableFullScreenKey, true);
+    }
+
+    return options;
   }
 }
 
