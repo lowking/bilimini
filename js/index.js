@@ -57,6 +57,7 @@ var _history = {
         wv.loadURL(target, {
           userAgent: userAgent.desktop
         });
+        !noNewHistory && _history.add(target);
         _history.replace(target);
       } else {
         // 其他链接不做操作直接打开
@@ -374,18 +375,24 @@ function checkUpdateOnInit() {
 }
 
 // 当用户拖拽窗口时保存窗口尺寸
+var saveWindowSizeTimer;
 function saveWindowSizeOnResize() {
-  var saveWindowSizeTimer;
   window.addEventListener('resize', function() {
     clearTimeout(saveWindowSizeTimer);
     saveWindowSizeTimer = setTimeout(function() {
+      let cw = remote.getCurrentWindow().getBounds();
+      // win上双击topbar全屏之后位置变成-8,强制修改成0,避免下次打开的时候窗口位置偏移
+      utils.config.set(currentWindowType + utils.constant.windowPositionKey,
+          [cw.x === -8 ? 0 : cw.x, cw.y === -8 ? 0 : cw.y]);
       utils.config.set(currentWindowType, [window.innerWidth, window.innerHeight]);
+      // 通知设置窗口改变位置
+      ipc.send('main-window-resized', null, null);
     }, 600);
   });
 }
 
 // 根据用户访问的url决定app窗口尺寸
-var currentWindowType = 'default';
+var currentWindowType = 'windowSizeDefault';
 
 function resizeMainWindow(type) {
   let targetWindowType, url = wv.getURL();
@@ -404,7 +411,11 @@ function resizeMainWindow(type) {
       leftTopPosition = mw.getPosition(),
       rightBottomPosition = [leftTopPosition[0] + currentSize[0], leftTopPosition[1] + currentSize[1]],
       targetSize = utils.config.get(targetWindowType),
+      targetPosition = utils.config.get(targetWindowType + utils.constant.windowPositionKey);
+    utils.log(`目标窗口设置:${JSON.stringify(targetPosition)}`);
+    if (targetPosition === undefined && targetPosition.size !== 2) {
       targetPosition = [rightBottomPosition[0] - targetSize[0], rightBottomPosition[1] - targetSize[1]];
+    }
 
     let options = {
       x: targetPosition[0],
@@ -420,7 +431,14 @@ function resizeMainWindow(type) {
         height: utils.config.get('majsoulWindowCustomSize')[1]
       };
     }
-    utils.log(`窗口设置:${JSON.stringify(options)}`);
+
+    let cw = remote.getCurrentWindow().getBounds();
+    // win上双击topbar全屏之后位置变成-8,强制修改成0,避免下次打开的时候窗口位置偏移
+    utils.config.set(currentWindowType + utils.constant.windowPositionKey,
+        [cw.x === -8 ? 0 : cw.x, cw.y === -8 ? 0 : cw.y]);
+    utils.config.set(currentWindowType, [window.innerWidth, window.innerHeight]);
+
+    utils.log(`${targetWindowType}窗口设置:${JSON.stringify(options)}`);
     mw.setBounds(options, true);
 
     currentWindowType = targetWindowType;

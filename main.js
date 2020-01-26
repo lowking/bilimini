@@ -37,6 +37,13 @@ function openMainWindow() {
   mainWindow = new electron.BrowserWindow(windowParams);
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.setAlwaysOnTop(true, 'torn-off-menu');
+  let options = {
+        x: utils.config.get('windowSizeDefault'+utils.constant.windowPositionKey)[0],
+        y: utils.config.get('windowSizeDefault'+utils.constant.windowPositionKey)[1],
+        width: utils.config.get('windowSizeDefault')[0],
+        height: utils.config.get('windowSizeDefault')[1]
+      };
+  mainWindow.setBounds(options);
   mainWindow.on('closed', () => {
     mainWindow = null;
     utils.log('主窗口：已关闭');
