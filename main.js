@@ -278,6 +278,11 @@ function initMenu() {
           click() { mainWindow.webContents.send('focus-danmaku-input'); }
         },
         {
+          label: 'Full Screen',
+          accelerator: 'Alt+Enter',
+          click() { mainWindow.webContents.send('enter-full-screen'); }
+        },
+        {
           label: 'Backward',
           accelerator: 'Esc',
           click() { mainWindow.webContents.send('press-esc'); }

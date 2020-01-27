@@ -604,6 +604,13 @@ function initWebviewSendEnterShortcuts() {
   });
 }
 
+// 用户alt+enter时，全屏
+function initFullScreenShortcuts() {
+  ipc.on('enter-full-screen', (ev, arg) => {
+    resizeMainWindow('full-screen');
+  });
+}
+
 // windows下frameless window没法正确检测到mouseout事件，只能根据光标位置做个dirtyCheck了
 function initMouseStateDirtyCheck() {
   // 统一改为由js判断，一旦鼠标进入主窗口的上较近才显示topbar
@@ -665,6 +672,7 @@ window.addEventListener('DOMContentLoaded', function() {
   initActionOnEsc();
   initWebviewVolumeContrlShortcuts();
   initWebviewSendEnterShortcuts();
+  initFullScreenShortcuts();
   saveWindowSizeOnResize();
   initMouseStateDirtyCheck();
   openWebviewConsoleOnMenuClick();
