@@ -14,10 +14,12 @@ let wv, wrapper, topbar;
 let _isLastNavigatePartSelect = false;
 let _isLastestVersionChecked = false;
 let clickTimer;
+const homeUrl = utils.config.get('homeUrl');
+const homeUserAgent = utils.config.get('userAgent');
 
 // 保存用户浏览记录
 var _history = {
-  stack: ['https://m.bilibili.com/index.html'],
+  stack: [homeUrl],
   pos: 0,
   go: function(target, noNewHistory, openType) {
     // 显示loading mask
@@ -60,10 +62,22 @@ var _history = {
         !noNewHistory && _history.add(target);
         _history.replace(target);
       } else {
-        // 其他链接不做操作直接打开
-        wv.loadURL(target, {
-          userAgent: userAgent.mobile
-        });
+        // b站首页
+        if (target.indexOf('bilibili.com') > -1) {
+          if (Number(utils.config.get(`isUsePcVersion`)) === 1) {
+            _history.go(target, null, "d");
+          } else {
+            // 其他链接不做操作直接打开
+            wv.loadURL(target, {
+              userAgent: userAgent.mobile
+            });
+          }
+        } else {
+          // 其他链接不做操作直接打开
+          wv.loadURL(target, {
+            userAgent: userAgent.mobile
+          });
+        }
         !noNewHistory && _history.add(target);
         // 清除分p
         ipc.send('update-part', null);
@@ -215,17 +229,27 @@ const v = new Vue({
     },
     // 通过url或av号跳转
     naviGotoShow: function() {
-      let url = wv.getURL();
-      if( url.indexOf("majsoul") > -1 ){
-        this.naviGotoTarget = 'http://m.bilibili.com/index.html';
-        this.naviGoto();
-        this.naviGotoHide();
-        return;
-      }
-      this.naviGotoTarget = '';
-      this.naviGotoInputShow = true;
-      this.showNaviGotoOverlay = true;
-      document.getElementById('av-input').focus();
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => {
+        let url = wv.getURL();
+        if( url.indexOf("majsoul") > -1 ){
+          this.naviGotoTarget = 'http://m.bilibili.com/index.html';
+          this.naviGoto();
+          this.naviGotoHide();
+          return;
+        }
+        this.naviGotoTarget = '';
+        this.naviGotoInputShow = true;
+        this.showNaviGotoOverlay = true;
+        document.getElementById('av-input').focus();
+      }, 300);
+    },
+    // 双击回b站首页
+    naviGotoHome: function() {
+      clearTimeout(clickTimer);
+      this.naviGotoTarget = utils.config.get(`homeUrl`);
+      this.naviGoto();
+      this.naviGotoHide();
     },
     // 雀魂
     naviGotoMajsoul: function() {
@@ -582,7 +606,7 @@ function initActionOnEsc() {
   ipc.on('press-esc', (ev) => {
     let url = wv.getURL();
     // 如果在播放页按下esc就触发后退
-    if( /video\/av\d+/.test(url) || url.indexOf('html5player.html') > -1 || url.indexOf('majsoul') > -1) {
+    if( /video\/av\d+/.test(url) || url.indexOf('html5player.html') > -1 || url.indexOf('majsoul') > -1 || url.indexOf('bangumi') > -1) {
       utils.log('在播放器页面、雀魂按下ESC，后退至上一页');
       _history.goBack();
     }
@@ -663,6 +687,7 @@ function logWebviewError() {
 }
 
 window.addEventListener('DOMContentLoaded', function() {
+
   wrapper = document.getElementById('wrapper');
   topbar = document.getElementById('topbar');
   wv = document.getElementById('wv');

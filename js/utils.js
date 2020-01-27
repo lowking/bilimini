@@ -32,6 +32,7 @@ var config = {
     delete(key) {
         store.delete(key);
     },
+    homeUrl: 'http://m.bilibili.com/index.html',
     windowSizeMini: [300, 187],
     windowSizeDefault: [375, 500],
     windowSizeMajsoulDefault: [999, 562],

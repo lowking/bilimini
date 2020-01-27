@@ -18,6 +18,16 @@
         <input type="text" class="input" v-model="hideShortcut">
         <span class="btn btn-submit" @click="saveHideShortcut">确定</span>
       </div>
+      <!-- 使用pc版浏览首页 -->
+      <p class="list-title">使用pc版浏览首页</p>
+      <div class="item">
+        <input type="radio" id="use-pc-y" value="1" class="input w10px" v-model="isUsePcVersion">
+        <label for="option-y">是</label>
+        <label>  </label>
+        <input type="radio" id="use-pc-n" value="2" class="input w10px" v-model="isUsePcVersion">
+        <label for="option-n">否</label>
+        <span class="btn btn-submit" @click="saveIsUsePcVersion">保存</span>
+      </div>
       <!-- 雀魂双击自定义窗口大小 -->
       <p class="list-title">雀魂双击自定义窗口大小、位置</p>
       <div class="item">
@@ -76,7 +86,8 @@
         majsoulCustomPositionY: '',
         majsoulCustomSizeW: '',
         majsoulCustomSizeH: '',
-        isResetBoundForMajsoul: 0
+        isResetBoundForMajsoul: 2,
+        isUsePcVersion: 2
       },
       watch: {
         opacity(val) {
@@ -154,6 +165,16 @@
         },
         saveIsResetBoundForMajsoul() {
           config.set('isResetBoundForMajsoul', Number(this.isResetBoundForMajsoul));
+        },
+        saveIsUsePcVersion() {
+          if (Number(this.isUsePcVersion) === 1) {
+            config.set('homeUrl', 'http://bilibili.com');
+            config.delete('userAgent');
+          } else {
+            config.set('homeUrl', 'http://m.bilibili.com/index.html');
+            config.set('userAgent', 'bilimini Mobile like (iPhone or Android) whatever AppleWebKit/124.50 Mobile/BI233');
+          }
+          config.set('isUsePcVersion', Number(this.isUsePcVersion));
         }
       },
       mounted() {
@@ -165,6 +186,7 @@
         this.majsoulCustomPositionX = config.get('majsoulWindowCustomPosition')[0];
         this.majsoulCustomPositionY = config.get('majsoulWindowCustomPosition')[1];
         this.isResetBoundForMajsoul = config.get('isResetBoundForMajsoul');
+        this.isUsePcVersion = config.get('isUsePcVersion');
       }
     });
 
