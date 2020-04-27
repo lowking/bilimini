@@ -474,7 +474,7 @@ function resizeMainWindow(type) {
       targetSize = utils.config.get(targetWindowType),
       targetPosition = utils.config.get(targetWindowType + utils.constant.windowPositionKey);
     utils.log(`目标窗口设置:${JSON.stringify(targetPosition)}`);
-    if (targetPosition === undefined && targetPosition.size !== 2) {
+    if (targetPosition === undefined || targetPosition.size !== 2) {
       targetPosition = [rightBottomPosition[0] - targetSize[0], rightBottomPosition[1] - targetSize[1]];
     }
     
