@@ -34,6 +34,7 @@ var config = {
     },
     homeUrl: 'http://m.bilibili.com/index.html',
     windowSizeMini: [300, 187],
+    windowSizeFeed: [650, 760],
     windowSizeDefault: [375, 500],
     windowSizeMajsoulDefault: [999, 562],
     majsoulWindowCustomSize: [1456, 819],
@@ -69,6 +70,27 @@ function getAppPath() {
 }
 const appPath = getAppPath();
 
+function getVid(url) {
+    let m  = /video\/(av\d+(?:\/\?p=\d+)?)/.exec(url) ||
+             /video\/(BV\w+(?:\/\?p=\d+)?)/.exec(url)
+    return m ? m[1] : null;
+}
+
+function getFirstJsonFromString(text) {
+    const len = text.length;
+    for( let i = 0; i < len; i++ ) {
+        if( text[i] === '}' ) {
+            try {
+                const str = text.substr(0, i+1);
+                return JSON.parse(str);
+            } catch(e) {
+                // 
+            }
+        }
+    }
+    return false;
+}
+
 Date.prototype.format = function() {
     return `${this.toLocaleDateString()} ${this.toTimeString().split(' ')[0]} ` + 
             ('000' + this.getMilliseconds()).slice(-3);
@@ -101,6 +123,8 @@ module.exports = {
     constant,
     config,
     ajax,
+    getVid,
+    getFirstJsonFromString,
     log(message, data, override) {
         log.write({
             message,
