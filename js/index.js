@@ -309,7 +309,7 @@ const v = new Vue({
       utils.log(`路由：手动输入地址 ${target}`);
       // 包含bilibili.com的字符串和纯数字是合法的跳转目标
       if (target.startsWith('e')) {
-        target = "https://www.majsoul.com/1/";
+        target = "https://game.maj-soul.com/1/";
         _history.go(target, null, "d");
         this.naviGotoHide();
       } else if(target.startsWith('http') && target.indexOf('bilibili.com') > -1) {
